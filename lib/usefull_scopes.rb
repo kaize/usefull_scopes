@@ -1,0 +1,23 @@
+module UsefullScopes
+  autoload :Version, 'usefull_scopes/version'
+  extend ActiveSupport::Concern
+
+  included do
+    scope :random, order("RANDOM()")
+    scope :exclude, lambda {|id_or_object|
+      value = id_or_object.is_a?(ActiveRecord::Base) ? id_or_object.id : id_or_object
+      return scoped unless value
+      where("#{quoted_table_name}.id != ?", value)
+    }
+
+    attribute_names.each do |a|
+      scope "by_#{a}", order("#{a} DESC")
+      scope "asc_by_#{a}", order("#{a} ASC")
+      scope "like_by_#{a}", lambda {|term|
+        quoted_term = connection.quote(term + '%')
+        where("lower(#{a}) like #{quoted_term}")
+      }
+    end
+  end
+end
+
