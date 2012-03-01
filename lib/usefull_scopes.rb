@@ -11,11 +11,11 @@ module UsefullScopes
     }
 
     attribute_names.each do |a|
-      scope "by_#{a}", order("#{a} DESC")
-      scope "asc_by_#{a}", order("#{a} ASC")
+      scope "by_#{a}", order("#{quoted_table_name}.#{a} DESC")
+      scope "asc_by_#{a}", order("#{quoted_table_name}.#{a} ASC")
       scope "like_by_#{a}", lambda {|term|
         quoted_term = connection.quote(term + '%')
-        where("lower(#{a}) like #{quoted_term}")
+        where("lower(#{quoted_table_name}.#{a}) like #{quoted_term}")
       }
     end
   end
