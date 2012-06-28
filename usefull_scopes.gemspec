@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Mokevnin Kirill"]
   s.email       = ["mokevnin@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = "Additional scopes for Active:Record models."
+  s.description = "This gem provides additional scopes for your Active:Record models within Ruby on Rails framework."
 
   s.rubyforge_project = "usefull_scopes"
 

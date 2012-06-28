@@ -17,6 +17,10 @@ module UsefullScopes
         quoted_term = connection.quote(term + '%')
         where("lower(#{quoted_table_name}.#{a}) like #{quoted_term}")
       }
+      scope "ilike_by_#{a}", lambda {|term|
+        quoted_term = connection.quote(term + '%')
+        where("#{quoted_table_name}.#{a} ilike #{quoted_term}")
+      }
     end
   end
 end
