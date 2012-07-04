@@ -4,10 +4,13 @@ module UsefullScopes
 
   included do
     scope :random, order("RANDOM()")
-    scope :exclude, lambda {|id_or_object|
-      value = id_or_object.is_a?(ActiveRecord::Base) ? id_or_object.id : id_or_object
+    scope :exclude, lambda {|collection_or_object|
+      collection = Array(collection_or_object)
+      values = collection.map do |id_or_object|
+        id_or_object.is_a?(ActiveRecord::Base) ? id_or_object.id : id_or_object
+      end
       return scoped unless value
-      where("#{quoted_table_name}.id != ?", value)
+      where("#{quoted_table_name}.id in (?)", values)
     }
 
     attribute_names.each do |a|
