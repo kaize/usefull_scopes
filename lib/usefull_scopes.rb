@@ -10,7 +10,7 @@ module UsefullScopes
         id_or_object.is_a?(ActiveRecord::Base) ? id_or_object.id : id_or_object
       end
       return scoped unless values.any?
-      where("#{quoted_table_name}.id in (?)", values)
+      where("#{quoted_table_name}.id not in (?)", values)
     }
 
     attribute_names.each do |a|
