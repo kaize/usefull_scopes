@@ -9,7 +9,7 @@ module UsefullScopes
       values = collection.map do |id_or_object|
         id_or_object.is_a?(ActiveRecord::Base) ? id_or_object.id : id_or_object
       end
-      return scoped unless value
+      return scoped unless values.any?
       where("#{quoted_table_name}.id in (?)", values)
     }
 
