@@ -75,7 +75,8 @@ module UsefullScopes
     end
 
     def self.find_object_value_or_value(value_or_object, field = "id")
-      value_or_object.is_a?(ActiveRecord::Base) ? value_or_object.send(field) : value_or_object
+      value = value_or_object.is_a?(ActiveRecord::Base) ? value_or_object.send(field) : value_or_object
+      connection.quote(value) if columns_hash[field].type != :integer
     end
   end
 end
