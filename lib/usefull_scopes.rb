@@ -4,7 +4,7 @@ module UsefullScopes
 
   included do
     scope :random, order("RANDOM()")
-    scope :exclude, lambda {|collection_or_object|
+    scope :exclude, ->(collection_or_object) {
       collection = Array(collection_or_object)
       values = collection.map do |id_or_object|
         find_object_value_or_value(id_or_object)
@@ -41,12 +41,11 @@ module UsefullScopes
     attribute_names.each do |a|
       scope "by_#{a}", order("#{quoted_table_name}.#{a} DESC")
       scope "asc_by_#{a}", order("#{quoted_table_name}.#{a} ASC")
-
-      scope "like_by_#{a}", lambda {|term|
+      scope "like_by_#{a}", ->(term) {
         quoted_term = connection.quote(term + '%')
         where("lower(#{quoted_table_name}.#{a}) like #{quoted_term}")
       }
-      scope "ilike_by_#{a}", lambda {|term|
+      scope "ilike_by_#{a}", ->(term) {
         quoted_term = connection.quote(term + '%')
         where("#{quoted_table_name}.#{a} ilike #{quoted_term}")
       }
