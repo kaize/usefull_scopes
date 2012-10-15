@@ -74,7 +74,7 @@ module UsefullScopes
       }
     end
 
-    def find_object_value_or_value(value_or_object, field = "id")
+    def self.find_object_value_or_value(value_or_object, field = "id")
       value_or_object.is_a?(ActiveRecord::Base) ? value_or_object.send(field) : value_or_object
     end
   end
