@@ -7,7 +7,7 @@ module UsefullScopes
     scope :exclude, lambda {|collection_or_object|
       collection = Array(collection_or_object)
       values = collection.map do |id_or_object|
-        id_or_object.is_a?(ActiveRecord::Base) ? id_or_object.id : id_or_object
+        find_object_value_or_value(id_or_object)
       end
       return scoped unless values.any?
       where("#{quoted_table_name}.id not in (?)", values)
