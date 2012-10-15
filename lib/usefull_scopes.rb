@@ -10,7 +10,7 @@ module UsefullScopes
         find_object_value_or_value(id_or_object)
       end
       return scoped unless values.any?
-      where("#{quoted_table_name}.id not in (?)", values)
+      where(arel_table[:id].not_in(values))
     }
 
     scope :with, lambda {|attrs_hash|
@@ -39,9 +39,11 @@ module UsefullScopes
     }
 
     attribute_names.each do |a|
-      scope "by_#{a}", order("#{quoted_table_name}.#{a} DESC")
+      a = a.to_sym
 
-      scope "asc_by_#{a}", order("#{quoted_table_name}.#{a} ASC")
+      scope "by_#{a}", order(arel_table[a].desc)
+
+      scope "asc_by_#{a}", order(arel_table[a].asc)
 
       scope "like_by_#{a}", ->(term) {
         quoted_term = connection.quote(term + '%')
@@ -49,34 +51,33 @@ module UsefullScopes
       }
 
       scope "ilike_by_#{a}", ->(term) {
-        quoted_term = connection.quote(term + '%')
-        where("#{quoted_table_name}.#{a} ilike #{quoted_term}")
+        quoted_term = term + '%'
+        where(arel_table[a].matches(quoted_term))
       }
 
       scope "#{a}_more", ->(value_or_object) {
         value = find_object_value_or_value(value_or_object, a)
-        where("#{quoted_table_name}.#{a} > #{value}")
+        where(arel_table[a].gt(value))
       }
 
       scope "#{a}_less", ->(value_or_object) {
         value = find_object_value_or_value(value_or_object, a)
-        where("#{quoted_table_name}.#{a} < #{value}")
+        where(arel_table[a].lt(value))
       }
 
       scope "#{a}_more_or_equal", ->(value_or_object) {
         value = find_object_value_or_value(value_or_object, a)
-        where("#{quoted_table_name}.#{a} >= #{value}")
+        where(arel_table[a].gteq(value))
       }
 
       scope "#{a}_less_or_equal", ->(value_or_object) {
         value = find_object_value_or_value(value_or_object, a)
-        where("#{quoted_table_name}.#{a} <= #{value}")
+        where(arel_table[a].lteq(value))
       }
     end
 
-    def self.find_object_value_or_value(value_or_object, field = "id")
-      value = value_or_object.is_a?(ActiveRecord::Base) ? value_or_object.send(field) : value_or_object
-      connection.quote(value) if columns_hash[field].type != :integer
+    def self.find_object_value_or_value(value_or_object, field = :id)
+      value_or_object.is_a?(ActiveRecord::Base) ? value_or_object.send(field) : value_or_object
     end
   end
 end
