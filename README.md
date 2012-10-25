@@ -56,11 +56,19 @@ These are the scopes created for each model's attribute.
   </tr>
   <tr>
     <td>like_by_attribute</td>
-    <td>Returns records, where attribute value like a given term </td>
+    <td>Returns records, where attribute's value like a given term </td>
   </tr>
   <tr>
     <td>ilike_by_attribute</td>
     <td>Сase insensitive implementation of `like_by_attribute`</td>
+  </tr>
+  <tr>
+    <td>with_attribute</td>
+    <td>Returns records, where attribute's value equal to a given value</td>
+  </tr>
+  <tr>
+    <td>without_attribute</td>
+    <td>Returns records, where attribute's value is `NULL`</td>
   </tr>
 </table>
 
@@ -79,6 +87,10 @@ Now, it is time to play with our model!
 
     User.by_name.map(&:name)
       => ['Paul', 'Mike']
+
+    users = User.with_name('Mike')
+    users.map(&:name)
+      => ['Mike']
 
 ## Contributing
 
