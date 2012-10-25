@@ -33,7 +33,7 @@ In order to use these scopes, we need to include `UsefullScopes` module in our m
   </tr>
   <tr>
     <td>exclude</td>
-    <td>Selects only those records who are not in a given array (you could also provide a single object)</td>
+    <td>Selects only those records who are not in a given array (you could also provide a single object as an argument)</td>
   </tr>
 </table>
 
@@ -66,7 +66,7 @@ These are the scopes created for each model's attribute.
 
 ### Example
 
-Now, it is time play with out model!
+Now, it is time to play with our model!
 
     User.create([{name: 'Mike'}, {name: 'Paul'}])
 
