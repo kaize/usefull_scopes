@@ -35,6 +35,14 @@ In order to use these scopes, we need to include `UsefullScopes` module in our m
     <td>exclude</td>
     <td>Selects only those records who are not in a given array (you could also provide a single object as an argument)</td>
   </tr>
+  <tr>
+    <td>with</td>
+    <td>Returns records, where attributes' values are corresponding to a given hash.</td>
+  </tr>
+  <tr>
+    <td>without</td>
+    <td>Returns records, where attributes' values are `NULL` or aren't equal to values from a given hash.</td>
+  </tr>
 </table>
 
 ### Scopes per attribute
@@ -64,11 +72,11 @@ These are the scopes created for each model's attribute.
   </tr>
   <tr>
     <td>with_attribute</td>
-    <td>Returns records, where attribute's value equal to a given value</td>
+    <td>Returns records, where attribute's value is equal to a given value. <b>Note: this scope is deprecated and will be removed in the following versions. Please, use `with` scope instead.</b></td>
   </tr>
   <tr>
     <td>without_attribute</td>
-    <td>Returns records, where attribute's value is `NULL`</td>
+    <td>Returns records, where attribute's value is `NULL`. <b>Note: this scope is deprecated and will be removed in the following versions. Please, use `without` scope instead.</b></td>
   </tr>
 </table>
 
@@ -91,6 +99,21 @@ Now, it is time to play with our model!
     users = User.with_name('Mike')
     users.map(&:name)
       => ['Mike']
+
+    users = User.with(name: 'Mike')
+      => SELECT "users".* FROM "users" WHERE ("users"."name" = 'Mike')
+    users.map(&:name)
+      => ['Mike']
+
+    users = User.without(name: ['Mike', 'Paul'])
+      => SELECT "users".* FROM "users" WHERE ("users"."name" NOT IN ('Mike','Paul'))
+    users
+      => []
+
+    users = User.without(:name, :id)
+      => SELECT "users".* FROM "users" WHERE ("users"."name" IS NULL AND "users"."id" IS NULL)
+    users.count
+      => 2
 
 ## Contributing
 
