@@ -70,14 +70,6 @@ These are the scopes created for each model's attribute.
     <td>ilike_by_attribute</td>
     <td>Сase insensitive implementation of `like_by_attribute`</td>
   </tr>
-  <tr>
-    <td>with_attribute</td>
-    <td>Returns records, where attribute's value is equal to a given value.<br/><b>Note: this scope is deprecated and will be removed in the following versions. Please, use `with` scope instead.</b></td>
-  </tr>
-  <tr>
-    <td>without_attribute</td>
-    <td>Returns records, where attribute's value is `NULL`.<br/><b>Note: this scope is deprecated and will be removed in the following versions. Please, use `without` scope instead.</b></td>
-  </tr>
 </table>
 
 ### Example
