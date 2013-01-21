@@ -5,8 +5,8 @@ require "usefull_scopes/version"
 Gem::Specification.new do |s|
   s.name        = "usefull_scopes"
   s.version     = UsefullScopes::VERSION
-  s.authors     = ["Mokevnin Kirill"]
-  s.email       = ["mokevnin@gmail.com"]
+  s.authors     = ["Kaize Team"]
+  s.email       = ["info@kaize.ru"]
   s.homepage    = "http://github.com/kaize/usefull_scopes"
   s.summary     = "Additional scopes for Active:Record models."
   s.description = "This gem provides additional scopes for your Active:Record models within Ruby on Rails framework."
