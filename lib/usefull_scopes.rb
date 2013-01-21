@@ -50,15 +50,6 @@ module UsefullScopes
         quoted_term = connection.quote(term + '%')
         where("#{quoted_table_name}.#{a} ilike #{quoted_term}")
       }
-
-      scope "with_#{a}", lambda { |value|
-        puts "*** DEPRECATION WARNING: Scope `with_#{a}` is deprecated and will be removed in the following versions. Please, use `with` scope instead."
-        where("#{quoted_table_name}.#{a} = ?", value)
-      }
-      scope "without_#{a}", lambda {
-        puts "*** DEPRECATION WARNING: Scope `without_#{a}` is deprecated and will be removed in the following versions. Please, use `without` scope instead."
-        where("#{quoted_table_name}.#{a} IS NULL")
-      }
     end
   end
 end
