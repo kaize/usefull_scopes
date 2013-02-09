@@ -86,7 +86,7 @@ module UsefullScopes
 
       assert @models
 
-      assert @models.include?(@model) == false
+      refute @models.include?(@model)
     end
 
     def test_without_conditions
