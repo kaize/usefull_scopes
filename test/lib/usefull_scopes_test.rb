@@ -115,5 +115,37 @@ module UsefullScopes
       end
     end
 
+    def test_like_by_result
+      3.times { create :model }
+      @model = Model.first
+
+      assert_respond_to Model, :like_by_field_2
+
+      @models = Model.like_by_field_2(@model.field_2[0..3])
+
+      assert @models.any?
+      assert_includes @models, @model
+
+    end
+
+    def test_like_by_condition
+      3.times { create :model }
+      @model = Model.first
+
+      @models = Model.like_by_field_2(@model.field_2[0..3])
+
+      ctx = @models.arel.as_json["ctx"]
+      where_conditions = ctx.wheres
+
+      assert where_conditions.any?
+
+      where_conditions.each do |condition|
+        assert_kind_of Arel::Nodes::Grouping, condition
+        assert condition.expr.match "like"
+      end
+
+    end
+
+
   end
 end
