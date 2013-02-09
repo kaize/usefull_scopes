@@ -101,7 +101,14 @@ module UsefullScopes
 
       where_conditions.each do |condition|
         assert_kind_of Arel::Nodes::Grouping, condition
-        assert condition.expr.match "NOT IN"
+        condition.expr.children.each do |condition_part|
+          assert_kind_of Arel::Nodes::NotIn, condition_part
+
+          assert_kind_of Arel::Attributes::Attribute, condition_part.left
+
+          assert_equal :field_1, condition_part.left.name
+          assert_equal 1, condition_part.right
+        end
       end
     end
 
