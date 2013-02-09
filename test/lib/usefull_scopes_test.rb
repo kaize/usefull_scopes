@@ -310,6 +310,16 @@ module UsefullScopes
       end
     end
 
+    def test_more_or_equal_by_result
+      3.times { create :model }
+      @model = Model.last
+
+      @models = Model.field_1_more_or_equal(@model.field_1)
+
+      assert @models.any?
+      assert @models.include?(@model)
+    end
+
     def test_more_or_equal_by_condition
       3.times { create :model }
       @model = Model.first
