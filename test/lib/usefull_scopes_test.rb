@@ -311,5 +311,24 @@ module UsefullScopes
       end
     end
 
+    def test_less_or_equal_by_condition
+      3.times { create :model }
+      @model = Model.first
+
+      @models = Model.field_1_less_or_equal(@model.field_1)
+
+      ctx = @models.arel.as_json["ctx"]
+      where_conditions = ctx.wheres
+
+      assert where_conditions.any?
+
+      where_conditions.each do |condition|
+        assert_kind_of Arel::Nodes::Grouping, condition
+        assert_kind_of Arel::Nodes::LessThanOrEqual, condition.expr
+        assert_equal @model.field_1, condition.expr.right
+      end
+
+    end
+
   end
 end
