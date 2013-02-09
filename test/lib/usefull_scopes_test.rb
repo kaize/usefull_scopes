@@ -310,7 +310,7 @@ module UsefullScopes
       end
     end
 
-    def test_more_or_equal_by_result
+    def test_field_more_or_equal_by_result
       3.times { create :model }
       @model = Model.last
 
@@ -320,7 +320,7 @@ module UsefullScopes
       assert @models.include?(@model)
     end
 
-    def test_more_or_equal_by_condition
+    def test_field_more_or_equal_by_condition
       3.times { create :model }
       @model = Model.first
 
@@ -338,7 +338,7 @@ module UsefullScopes
       end
     end
 
-    def test_less_or_equal_by_result
+    def test_field_less_or_equal_by_result
       3.times { create :model }
       @model = Model.first
 
@@ -348,7 +348,7 @@ module UsefullScopes
       assert @models.include?(@model)
     end
 
-    def test_less_or_equal_by_condition
+    def test_field_less_or_equal_by_condition
       3.times { create :model }
       @model = Model.first
 
