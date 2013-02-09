@@ -240,11 +240,72 @@ module UsefullScopes
       end
     end
 
-    def test_without_incorrect_params
+    def test_desc_by_incorrect_params
       3.times { create :model }
       @model = Model.first
       begin
       @models = Model.desc_by("field_1")
+      rescue Exception => e
+        assert_equal "Symbol or Array of symbols is expected", e.message
+      end
+    end
+
+    def test_asc_by_result
+      3.times { create :model }
+      @model = Model.first
+
+      assert_respond_to Model, :asc_by
+
+      @models = Model.asc_by(:field_1)
+
+      assert @models.any?
+    end
+
+    def test_asc_by_condition_array_attrs
+      3.times { create :model }
+      @model = Model.first
+      attrs = [:field_1, :field_2]
+
+      @models = Model.asc_by(attrs)
+
+      arel = @models.arel
+      orders_conditions = arel.orders
+
+      assert orders_conditions.any?
+
+      orders_conditions.each_with_index do |condition, index|
+        assert_kind_of Arel::Nodes::Ascending, condition
+        assert_kind_of Arel::Attributes::Attribute, condition.expr
+
+        assert_equal attrs[index], condition.expr.name
+      end
+    end
+
+
+    def test_asc_by_condition
+      3.times { create :model }
+      @model = Model.first
+
+      @models = Model.asc_by(:field_1)
+
+      arel = @models.arel
+      orders_conditions = arel.orders
+
+      assert orders_conditions.any?
+
+      orders_conditions.each do |condition|
+        assert_kind_of Arel::Nodes::Ascending, condition
+        assert_kind_of Arel::Attributes::Attribute, condition.expr
+
+        assert_equal :field_1, condition.expr.name
+      end
+    end
+
+    def test_asc_by_incorrect_params
+      3.times { create :model }
+      @model = Model.first
+      begin
+      @models = Model.asc_by("field_1")
       rescue Exception => e
         assert_equal "Symbol or Array of symbols is expected", e.message
       end
