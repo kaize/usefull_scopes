@@ -286,11 +286,22 @@ module UsefullScopes
       end
     end
 
-    def test_field_more_by_result
+    def test_field_more_than_value_by_result
       @model_less = create :model
       @model_more = create :model, field_1: @model_less.field_1 + 1
 
       @models = Model.field_1_more(@model_less.field_1)
+
+      assert @models.any?
+      assert @models.include?(@model_more)
+      refute @models.include?(@model_less)
+    end
+
+    def test_field_more_than_object_by_result
+      @model_less = create :model
+      @model_more = create :model, field_1: @model_less.field_1 + 1
+
+      @models = Model.field_1_more(@model_less)
 
       assert @models.any?
       assert @models.include?(@model_more)
