@@ -310,6 +310,35 @@ module UsefullScopes
       end
     end
 
+    def test_field_less_by_result
+      @model_less = create :model
+      @model_more = create :model, field_1: @model_less.field_1 + 1
+
+      @models = Model.field_1_less(@model_more.field_1)
+
+      assert @models.any?
+      assert @models.include?(@model_less)
+      refute @models.include?(@model_more)
+    end
+
+    def test_field_less_by_condition
+      3.times { create :model }
+      @model = Model.first
+
+      @models = Model.field_1_less(@model.field_1)
+
+      ctx = @models.arel.as_json["ctx"]
+      where_conditions = ctx.wheres
+
+      assert where_conditions.any?
+
+      where_conditions.each do |condition|
+        assert_kind_of Arel::Nodes::Grouping, condition
+        assert_kind_of Arel::Nodes::LessThan, condition.expr
+        assert_equal @model.field_1, condition.expr.right
+      end
+    end
+
     def test_field_more_or_equal_by_result
       3.times { create :model }
       @model = Model.last
