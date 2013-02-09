@@ -3,6 +3,7 @@ require 'test_helper'
 module UsefullScopes
   class ScopesTest < TestCase
     def setup
+      3.times { create :model }
     end
 
     def test_random_order_condition
@@ -22,7 +23,6 @@ module UsefullScopes
     end
 
     def test_exclude_result
-      3.times { create :model }
       @model = Model.first
       @models = Model.exclude(@model)
 
@@ -32,7 +32,6 @@ module UsefullScopes
     end
 
     def test_exclude_conditions
-      3.times { create :model }
       @model = Model.first
       @models = Model.exclude(@model)
 
@@ -43,7 +42,6 @@ module UsefullScopes
     end
 
     def test_with_result
-      3.times { create :model }
       @model = Model.first
       @models = Model.with({field_1: @model.field_1})
 
@@ -53,7 +51,6 @@ module UsefullScopes
     end
 
     def test_with_conditions
-      3.times { create :model }
       @model = Model.first
       @models = Model.with({field_1: @model.field_1})
 
@@ -70,7 +67,6 @@ module UsefullScopes
     end
 
     def test_with_incorrect_params
-      3.times { create :model }
       @model = Model.first
       begin
       @models = Model.with("field_1 = #{@model.field_1}")
@@ -80,7 +76,6 @@ module UsefullScopes
     end
 
     def test_without_result
-      3.times { create :model }
       @model = Model.first
       @models = Model.without({field_1: @model.field_1})
 
@@ -90,7 +85,6 @@ module UsefullScopes
     end
 
     def test_without_conditions
-      3.times { create :model }
       @model = Model.first
       @models = Model.without({field_1: @model.field_1})
 
@@ -113,7 +107,6 @@ module UsefullScopes
     end
 
     def test_without_incorrect_params
-      3.times { create :model }
       @model = Model.first
       begin
       @models = Model.without("field_1 = #{@model.field_1}")
@@ -123,7 +116,6 @@ module UsefullScopes
     end
 
     def test_like_by_result
-      3.times { create :model }
       @model = Model.first
 
       assert_respond_to Model, :like_by_field_2
@@ -132,11 +124,9 @@ module UsefullScopes
 
       assert @models.any?
       assert_includes @models, @model
-
     end
 
     def test_like_by_condition
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.like_by_field_2(@model.field_2[0..3])
@@ -150,24 +140,21 @@ module UsefullScopes
         assert_kind_of Arel::Nodes::Grouping, condition
         assert condition.expr.match "like"
       end
-
     end
 
     def test_ilike_by_result
-      3.times { create :model }
       @model = Model.first
 
       assert_respond_to Model, :ilike_by_field_2
 
+      # SQLite error %(
       #@models = Model.ilike_by_field_2(@model.field_2[0..3])
 
       #assert @models.any?
       #assert_includes @models, @model
-
     end
 
     def test_ilike_by_condition
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.ilike_by_field_2(@model.field_2[0..3])
@@ -184,13 +171,10 @@ module UsefullScopes
         assert_kind_of Arel::Attributes::Attribute, condition.expr.left
         assert_equal :field_2, condition.expr.left.name
         assert_equal "stri%", condition.expr.right
-
       end
-
     end
 
     def test_desc_by_result
-      3.times { create :model }
       @model = Model.first
 
       assert_respond_to Model, :desc_by
@@ -201,7 +185,6 @@ module UsefullScopes
     end
 
     def test_desc_by_condition_array_attrs
-      3.times { create :model }
       @model = Model.first
       attrs = [:field_1, :field_2]
 
@@ -220,9 +203,7 @@ module UsefullScopes
       end
     end
 
-
     def test_desc_by_condition
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.desc_by(:field_1)
@@ -241,7 +222,6 @@ module UsefullScopes
     end
 
     def test_desc_by_incorrect_params
-      3.times { create :model }
       @model = Model.first
       begin
       @models = Model.desc_by("field_1")
@@ -251,7 +231,6 @@ module UsefullScopes
     end
 
     def test_asc_by_result
-      3.times { create :model }
       @model = Model.first
 
       assert_respond_to Model, :asc_by
@@ -262,7 +241,6 @@ module UsefullScopes
     end
 
     def test_asc_by_condition_array_attrs
-      3.times { create :model }
       @model = Model.first
       attrs = [:field_1, :field_2]
 
@@ -282,7 +260,6 @@ module UsefullScopes
     end
 
     def test_asc_by_condition
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.asc_by(:field_1)
@@ -301,7 +278,6 @@ module UsefullScopes
     end
 
     def test_asc_by_incorrect_params
-      3.times { create :model }
       @model = Model.first
       begin
       @models = Model.asc_by("field_1")
@@ -322,7 +298,6 @@ module UsefullScopes
     end
 
     def test_field_more_by_condition
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.field_1_more(@model.field_1)
@@ -351,7 +326,6 @@ module UsefullScopes
     end
 
     def test_field_less_by_condition
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.field_1_less(@model.field_1)
@@ -369,7 +343,6 @@ module UsefullScopes
     end
 
     def test_field_more_or_equal_by_result
-      3.times { create :model }
       @model = Model.last
 
       @models = Model.field_1_more_or_equal(@model.field_1)
@@ -379,7 +352,6 @@ module UsefullScopes
     end
 
     def test_field_more_or_equal_by_condition
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.field_1_more_or_equal(@model.field_1)
@@ -397,7 +369,6 @@ module UsefullScopes
     end
 
     def test_field_less_or_equal_by_result
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.field_1_less_or_equal(@model.field_1)
@@ -407,7 +378,6 @@ module UsefullScopes
     end
 
     def test_field_less_or_equal_by_condition
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.field_1_less_or_equal(@model.field_1)
@@ -425,7 +395,6 @@ module UsefullScopes
     end
 
     def test_more_than_result
-      3.times { create :model }
       @model = Model.last
 
       @models = Model.more_than({field_1: 1})
@@ -435,7 +404,6 @@ module UsefullScopes
     end
 
     def test_more_than_condition_value
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.more_than({field_1: 1})
@@ -456,11 +424,9 @@ module UsefullScopes
           assert_equal 1, condition_part.right
         end
       end
-
     end
 
     def test_more_than_condition_ar_object
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.more_than(@model)
@@ -481,11 +447,9 @@ module UsefullScopes
           assert_equal 1, condition_part.right
         end
       end
-
     end
 
     def test_more_than_incorrect_params
-      3.times { create :model }
       @model = Model.first
       begin
       @models = Model.more_than("field_1")
@@ -495,7 +459,6 @@ module UsefullScopes
     end
 
     def test_less_than_result
-      3.times { create :model }
       @model_first = Model.first
       @model_last = Model.last
 
@@ -506,7 +469,6 @@ module UsefullScopes
     end
 
     def test_less_than_condition_value
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.less_than({field_1: 1})
@@ -527,11 +489,9 @@ module UsefullScopes
           assert_equal 1, condition_part.right
         end
       end
-
     end
 
     def test_less_than_condition_ar_object
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.less_than(@model)
@@ -552,11 +512,9 @@ module UsefullScopes
           assert_equal 1, condition_part.right
         end
       end
-
     end
 
     def test_less_than_incorrect_params
-      3.times { create :model }
       @model = Model.first
       begin
       @models = Model.less_than("field_1")
@@ -566,7 +524,6 @@ module UsefullScopes
     end
 
     def test_more_or_equal_result
-      3.times { create :model }
       @model_first = Model.first
       @model_last = Model.last
 
@@ -578,7 +535,6 @@ module UsefullScopes
     end
 
     def test_more_or_equal_condition_value
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.more_or_equal({field_1: 1})
@@ -599,11 +555,9 @@ module UsefullScopes
           assert_equal 1, condition_part.right
         end
       end
-
     end
 
     def test_more_or_equal_condition_ar_object
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.more_or_equal(@model)
@@ -624,11 +578,9 @@ module UsefullScopes
           assert_equal 1, condition_part.right
         end
       end
-
     end
 
     def test_more_or_equal_incorrect_params
-      3.times { create :model }
       @model = Model.first
       begin
       @models = Model.more_or_equal("field_1")
@@ -638,7 +590,6 @@ module UsefullScopes
     end
 
     def test_less_or_equal_result
-      3.times { create :model }
       @model_first = Model.first
       @model_last = Model.last
 
@@ -650,7 +601,6 @@ module UsefullScopes
     end
 
     def test_less_or_equal_condition_value
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.less_or_equal({field_1: 1})
@@ -671,11 +621,9 @@ module UsefullScopes
           assert_equal 1, condition_part.right
         end
       end
-
     end
 
     def test_less_or_equal_condition_ar_object
-      3.times { create :model }
       @model = Model.first
 
       @models = Model.less_or_equal(@model)
@@ -696,11 +644,9 @@ module UsefullScopes
           assert_equal 1, condition_part.right
         end
       end
-
     end
 
     def test_less_or_equal_incorrect_params
-      3.times { create :model }
       @model = Model.first
       begin
       @models = Model.less_or_equal("field_1")
@@ -708,8 +654,5 @@ module UsefullScopes
         assert_equal "Hash or AR object is expected", e.message
       end
     end
-
-
-
   end
 end
