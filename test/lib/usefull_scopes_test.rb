@@ -64,8 +64,54 @@ module UsefullScopes
 
       where_conditions.each do |condition|
         condition.children.each do |condition_part|
-          assert Arel::Nodes::Equality, condition_part.class
+          assert_kind_of Arel::Nodes::Equality, condition_part
         end
+      end
+    end
+
+    def test_with_incorrect_params
+      3.times { create :model }
+      @model = Model.first
+      begin
+      @models = Model.with("field_1 = #{@model.field_1}")
+      rescue Exception => e
+        assert_equal "Hash is expected", e.message
+      end
+    end
+
+    def test_without_result
+      3.times { create :model }
+      @model = Model.first
+      @models = Model.without({field_1: @model.field_1})
+
+      assert @models
+
+      assert @models.include?(@model) == false
+    end
+
+    def test_without_conditions
+      3.times { create :model }
+      @model = Model.first
+      @models = Model.without({field_1: @model.field_1})
+
+      ctx = @models.arel.as_json["ctx"]
+      where_conditions = ctx.wheres
+
+      assert where_conditions.any?
+
+      where_conditions.each do |condition|
+        assert_kind_of Arel::Nodes::Grouping, condition
+        assert condition.expr.match "NOT IN"
+      end
+    end
+
+    def test_without_incorrect_params
+      3.times { create :model }
+      @model = Model.first
+      begin
+      @models = Model.without("field_1 = #{@model.field_1}")
+      rescue Exception => e
+        assert_equal "Hash is expected", e.message
       end
     end
 
