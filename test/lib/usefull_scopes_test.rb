@@ -403,15 +403,27 @@ module UsefullScopes
       end
     end
 
-    def test_field_less_or_equal_by_result
-      @model = Model.first
+    def test_field_less_or_equal_than_value_by_result
+      @model_less = create :model
+      @model_more = create :model, field_1: @model_less.field_1 + 1
 
-      @models = Model.field_1_less_or_equal(@model.field_1)
+      @models = Model.field_1_less_or_equal(@model_less.field_1)
 
       assert @models.any?
-      assert @models.include?(@model)
+      assert @models.include?(@model_less)
+      refute @models.include?(@model_more)
     end
 
+    def test_field_less_or_equal_than_object_by_result
+      @model_less = create :model
+      @model_more = create :model, field_1: @model_less.field_1 + 1
+
+      @models = Model.field_1_less_or_equal(@model_less)
+
+      assert @models.any?
+      assert @models.include?(@model_less)
+      refute @models.include?(@model_more)
+    end
     def test_field_less_or_equal_by_condition
       @model = Model.first
 
