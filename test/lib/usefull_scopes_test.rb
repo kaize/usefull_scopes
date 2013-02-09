@@ -179,7 +179,12 @@ module UsefullScopes
 
       where_conditions.each do |condition|
         assert_kind_of Arel::Nodes::Grouping, condition
-        assert condition.expr.match "ilike"
+        assert_kind_of Arel::Nodes::Matches, condition.expr
+
+        assert_kind_of Arel::Attributes::Attribute, condition.expr.left
+        assert_equal :field_2, condition.expr.left.name
+        assert_equal "stri%", condition.expr.right
+
       end
 
     end
