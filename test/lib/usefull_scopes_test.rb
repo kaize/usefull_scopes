@@ -26,7 +26,9 @@ module UsefullScopes
       @model = Model.first
       @models = Model.exclude(@model)
 
-      assert_equal 2, @models.count
+      models_count = Model.count - 1
+
+      assert_equal models_count, @models.count
     end
 
     def test_exclude_conditions
