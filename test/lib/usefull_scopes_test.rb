@@ -39,7 +39,7 @@ module UsefullScopes
       request_arel = @models.arel
       condition = request_arel.where_clauses
       assert_equal 1, condition.count
-      assert condition.first.match "not in"
+      assert condition.first.match "NOT IN"
     end
 
     def test_with_result
