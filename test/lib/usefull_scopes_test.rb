@@ -366,6 +366,16 @@ module UsefullScopes
       end
     end
 
+    def test_more_than_result
+      3.times { create :model }
+      @model = Model.last
+
+      @models = Model.more_than({field_1: 1})
+
+      assert @models.any?
+      assert @models.include?(@model)
+    end
+
     def test_more_than_condition_value
       3.times { create :model }
       @model = Model.first
@@ -424,6 +434,17 @@ module UsefullScopes
       rescue Exception => e
         assert_equal "Hash or AR object is expected", e.message
       end
+    end
+
+    def test_less_than_result
+      3.times { create :model }
+      @model_first = Model.first
+      @model_last = Model.last
+
+      @models = Model.less_than({field_1: @model_last.field_1})
+
+      assert @models.any?
+      assert @models.include?(@model_first)
     end
 
     def test_less_than_condition_value
@@ -486,6 +507,18 @@ module UsefullScopes
       end
     end
 
+    def test_more_or_equal_result
+      3.times { create :model }
+      @model_first = Model.first
+      @model_last = Model.last
+
+      @models = Model.more_or_equal({field_1: @model_last.field_1})
+
+      assert @models.any?
+      assert @models.include?(@model_last)
+      assert_equal @models.count, 1
+    end
+
     def test_more_or_equal_condition_value
       3.times { create :model }
       @model = Model.first
@@ -544,6 +577,18 @@ module UsefullScopes
       rescue Exception => e
         assert_equal "Hash or AR object is expected", e.message
       end
+    end
+
+    def test_less_or_equal_result
+      3.times { create :model }
+      @model_first = Model.first
+      @model_last = Model.last
+
+      @models = Model.less_or_equal({field_1: @model_first.field_1})
+
+      assert @models.any?
+      assert @models.include?(@model_first)
+      assert_equal @models.count, 1
     end
 
     def test_less_or_equal_condition_value
@@ -605,6 +650,7 @@ module UsefullScopes
         assert_equal "Hash or AR object is expected", e.message
       end
     end
+
 
 
   end
