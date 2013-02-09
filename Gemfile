@@ -11,3 +11,4 @@ gem 'turn'
 gem 'activerecord'
 gem 'factory_girl'
 gem 'simplecov'
+gem 'coveralls', require: false

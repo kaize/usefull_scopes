@@ -1,5 +1,6 @@
 # UsefullScopes
 [![Build Status](https://travis-ci.org/zzet/usefull_scopes.png?branch=testing)](https://travis-ci.org/zzet/usefull_scopes)
+[![Coverage status](https://coveralls.io/repos/zzet/usefull_scopes/badge.png?branch=testing)](https://coveralls.io/r/zzet/usefull_scopes)
 
 This gem provides additional scopes for your ActiveRecord models.
 
