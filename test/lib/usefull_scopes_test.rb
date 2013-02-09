@@ -338,6 +338,16 @@ module UsefullScopes
       end
     end
 
+    def test_less_or_equal_by_result
+      3.times { create :model }
+      @model = Model.first
+
+      @models = Model.field_1_less_or_equal(@model.field_1)
+
+      assert @models.any?
+      assert @models.include?(@model)
+    end
+
     def test_less_or_equal_by_condition
       3.times { create :model }
       @model = Model.first
