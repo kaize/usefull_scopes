@@ -426,5 +426,73 @@ module UsefullScopes
       end
     end
 
+
+
+
+
+
+
+
+    def test_less_than_condition_value
+      3.times { create :model }
+      @model = Model.first
+
+      @models = Model.less_than({field_1: 1})
+
+      ctx = @models.arel.as_json["ctx"]
+      where_conditions = ctx.wheres
+
+      assert where_conditions.any?
+
+      where_conditions.each do |condition|
+        assert_kind_of Arel::Nodes::Grouping, condition
+        condition.expr.children.each do |condition_part|
+          assert_kind_of Arel::Nodes::LessThan, condition_part
+
+          assert_kind_of Arel::Attributes::Attribute, condition_part.left
+
+          assert_equal :field_1, condition_part.left.name
+          assert_equal 1, condition_part.right
+        end
+      end
+
+    end
+
+    def test_less_than_condition_ar_object
+      3.times { create :model }
+      @model = Model.first
+
+      @models = Model.less_than(@model)
+
+      ctx = @models.arel.as_json["ctx"]
+      where_conditions = ctx.wheres
+
+      assert where_conditions.any?
+
+      where_conditions.each do |condition|
+        assert_kind_of Arel::Nodes::Grouping, condition
+        condition.expr.children.each do |condition_part|
+          assert_kind_of Arel::Nodes::LessThan, condition_part
+
+          assert_kind_of Arel::Attributes::Attribute, condition_part.left
+
+          assert_equal :id, condition_part.left.name
+          assert_equal 1, condition_part.right
+        end
+      end
+
+    end
+
+    def test_less_than_incorrect_params
+      3.times { create :model }
+      @model = Model.first
+      begin
+      @models = Model.less_than("field_1")
+      rescue Exception => e
+        assert_equal "Hash or AR object is expected", e.message
+      end
+    end
+
+
   end
 end
