@@ -4,6 +4,7 @@ module UsefullScopes
   class ScopesTest < TestCase
     def setup
       3.times { create :model }
+      @model = Model.first
     end
 
     def test_random_order_condition
@@ -23,7 +24,6 @@ module UsefullScopes
     end
 
     def test_exclude_result
-      @model = Model.first
       @models = Model.exclude(@model)
 
       models_count = Model.count - 1
@@ -32,7 +32,6 @@ module UsefullScopes
     end
 
     def test_exclude_conditions
-      @model = Model.first
       @models = Model.exclude(@model)
 
       request_arel = @models.arel
@@ -42,7 +41,6 @@ module UsefullScopes
     end
 
     def test_with_result
-      @model = Model.first
       @models = Model.with({field_1: @model.field_1})
 
       assert @models
@@ -51,7 +49,6 @@ module UsefullScopes
     end
 
     def test_with_conditions
-      @model = Model.first
       @models = Model.with({field_1: @model.field_1})
 
       ctx = @models.arel.as_json["ctx"]
@@ -67,16 +64,14 @@ module UsefullScopes
     end
 
     def test_with_incorrect_params
-      @model = Model.first
       begin
-      @models = Model.with("field_1 = #{@model.field_1}")
+        @models = Model.with("field_1 = #{@model.field_1}")
       rescue Exception => e
         assert_equal "Hash is expected", e.message
       end
     end
 
     def test_without_result
-      @model = Model.first
       @models = Model.without({field_1: @model.field_1})
 
       assert @models
@@ -85,7 +80,6 @@ module UsefullScopes
     end
 
     def test_without_conditions
-      @model = Model.first
       @models = Model.without({field_1: @model.field_1})
 
       ctx = @models.arel.as_json["ctx"]
@@ -107,16 +101,14 @@ module UsefullScopes
     end
 
     def test_without_incorrect_params
-      @model = Model.first
       begin
-      @models = Model.without("field_1 = #{@model.field_1}")
+        @models = Model.without("field_1 = #{@model.field_1}")
       rescue Exception => e
         assert_equal "Hash is expected", e.message
       end
     end
 
     def test_like_by_result
-      @model = Model.first
 
       assert_respond_to Model, :like_by_field_2
 
@@ -127,7 +119,6 @@ module UsefullScopes
     end
 
     def test_like_by_condition
-      @model = Model.first
 
       @models = Model.like_by_field_2(@model.field_2[0..3])
 
@@ -143,8 +134,6 @@ module UsefullScopes
     end
 
     def test_ilike_by_result
-      @model = Model.first
-
       assert_respond_to Model, :ilike_by_field_2
 
       # SQLite error %(
@@ -155,8 +144,6 @@ module UsefullScopes
     end
 
     def test_ilike_by_condition
-      @model = Model.first
-
       @models = Model.ilike_by_field_2(@model.field_2[0..3])
 
       ctx = @models.arel.as_json["ctx"]
@@ -175,8 +162,6 @@ module UsefullScopes
     end
 
     def test_desc_by_result
-      @model = Model.first
-
       assert_respond_to Model, :desc_by
 
       @models = Model.desc_by(:field_1)
@@ -185,7 +170,6 @@ module UsefullScopes
     end
 
     def test_desc_by_condition_array_attrs
-      @model = Model.first
       attrs = [:field_1, :field_2]
 
       @models = Model.desc_by(attrs)
@@ -204,8 +188,6 @@ module UsefullScopes
     end
 
     def test_desc_by_condition
-      @model = Model.first
-
       @models = Model.desc_by(:field_1)
 
       arel = @models.arel
@@ -222,17 +204,14 @@ module UsefullScopes
     end
 
     def test_desc_by_incorrect_params
-      @model = Model.first
       begin
-      @models = Model.desc_by("field_1")
+        @models = Model.desc_by("field_1")
       rescue Exception => e
         assert_equal "Symbol or Array of symbols is expected", e.message
       end
     end
 
     def test_asc_by_result
-      @model = Model.first
-
       assert_respond_to Model, :asc_by
 
       @models = Model.asc_by(:field_1)
@@ -241,7 +220,6 @@ module UsefullScopes
     end
 
     def test_asc_by_condition_array_attrs
-      @model = Model.first
       attrs = [:field_1, :field_2]
 
       @models = Model.asc_by(attrs)
@@ -260,8 +238,6 @@ module UsefullScopes
     end
 
     def test_asc_by_condition
-      @model = Model.first
-
       @models = Model.asc_by(:field_1)
 
       arel = @models.arel
@@ -278,9 +254,8 @@ module UsefullScopes
     end
 
     def test_asc_by_incorrect_params
-      @model = Model.first
       begin
-      @models = Model.asc_by("field_1")
+        @models = Model.asc_by("field_1")
       rescue Exception => e
         assert_equal "Symbol or Array of symbols is expected", e.message
       end
@@ -309,8 +284,6 @@ module UsefullScopes
     end
 
     def test_field_more_by_condition
-      @model = Model.first
-
       @models = Model.field_1_more(@model.field_1)
 
       ctx = @models.arel.as_json["ctx"]
@@ -348,8 +321,6 @@ module UsefullScopes
     end
 
     def test_field_less_by_condition
-      @model = Model.first
-
       @models = Model.field_1_less(@model.field_1)
 
       ctx = @models.arel.as_json["ctx"]
@@ -387,8 +358,6 @@ module UsefullScopes
     end
 
     def test_field_more_or_equal_by_condition
-      @model = Model.first
-
       @models = Model.field_1_more_or_equal(@model.field_1)
 
       ctx = @models.arel.as_json["ctx"]
@@ -425,8 +394,6 @@ module UsefullScopes
       refute @models.include?(@model_more)
     end
     def test_field_less_or_equal_by_condition
-      @model = Model.first
-
       @models = Model.field_1_less_or_equal(@model.field_1)
 
       ctx = @models.arel.as_json["ctx"]
@@ -451,8 +418,6 @@ module UsefullScopes
     end
 
     def test_more_than_condition_value
-      @model = Model.first
-
       @models = Model.more_than({field_1: 1})
 
       ctx = @models.arel.as_json["ctx"]
@@ -474,8 +439,6 @@ module UsefullScopes
     end
 
     def test_more_than_condition_ar_object
-      @model = Model.first
-
       @models = Model.more_than(@model)
 
       ctx = @models.arel.as_json["ctx"]
@@ -497,9 +460,8 @@ module UsefullScopes
     end
 
     def test_more_than_incorrect_params
-      @model = Model.first
       begin
-      @models = Model.more_than("field_1")
+        @models = Model.more_than("field_1")
       rescue Exception => e
         assert_equal "Hash or AR object is expected", e.message
       end
@@ -516,8 +478,6 @@ module UsefullScopes
     end
 
     def test_less_than_condition_value
-      @model = Model.first
-
       @models = Model.less_than({field_1: 1})
 
       ctx = @models.arel.as_json["ctx"]
@@ -539,8 +499,6 @@ module UsefullScopes
     end
 
     def test_less_than_condition_ar_object
-      @model = Model.first
-
       @models = Model.less_than(@model)
 
       ctx = @models.arel.as_json["ctx"]
@@ -562,9 +520,8 @@ module UsefullScopes
     end
 
     def test_less_than_incorrect_params
-      @model = Model.first
       begin
-      @models = Model.less_than("field_1")
+        @models = Model.less_than("field_1")
       rescue Exception => e
         assert_equal "Hash or AR object is expected", e.message
       end
@@ -582,8 +539,6 @@ module UsefullScopes
     end
 
     def test_more_or_equal_condition_value
-      @model = Model.first
-
       @models = Model.more_or_equal({field_1: 1})
 
       ctx = @models.arel.as_json["ctx"]
@@ -605,8 +560,6 @@ module UsefullScopes
     end
 
     def test_more_or_equal_condition_ar_object
-      @model = Model.first
-
       @models = Model.more_or_equal(@model)
 
       ctx = @models.arel.as_json["ctx"]
@@ -628,9 +581,8 @@ module UsefullScopes
     end
 
     def test_more_or_equal_incorrect_params
-      @model = Model.first
       begin
-      @models = Model.more_or_equal("field_1")
+        @models = Model.more_or_equal("field_1")
       rescue Exception => e
         assert_equal "Hash or AR object is expected", e.message
       end
@@ -648,8 +600,6 @@ module UsefullScopes
     end
 
     def test_less_or_equal_condition_value
-      @model = Model.first
-
       @models = Model.less_or_equal({field_1: 1})
 
       ctx = @models.arel.as_json["ctx"]
@@ -671,8 +621,6 @@ module UsefullScopes
     end
 
     def test_less_or_equal_condition_ar_object
-      @model = Model.first
-
       @models = Model.less_or_equal(@model)
 
       ctx = @models.arel.as_json["ctx"]
@@ -694,9 +642,8 @@ module UsefullScopes
     end
 
     def test_less_or_equal_incorrect_params
-      @model = Model.first
       begin
-      @models = Model.less_or_equal("field_1")
+        @models = Model.less_or_equal("field_1")
       rescue Exception => e
         assert_equal "Hash or AR object is expected", e.message
       end
