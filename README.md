@@ -1,6 +1,7 @@
 # UsefullScopes
 [![Build Status](https://travis-ci.org/kaize/usefull_scopes.png?branch=master)](https://travis-ci.org/kaize/usefull_scopes)
-[![Coverage status](https://coveralls.io/repos/zzet/usefull_scopes/badge.png?branch=testing)](https://coveralls.io/r/zzet/usefull_scopes)
+[![Coverage
+status](https://coveralls.io/repos/kaize/usefull_scopes/badge.png?branch=master)](https://coveralls.io/r/kaize/usefull_scopes)
 
 This gem provides additional scopes for your ActiveRecord models.
 
