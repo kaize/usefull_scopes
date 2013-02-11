@@ -17,6 +17,7 @@ ActiveRecord::Migration.create_table :models do |t|
   t.integer       :field_1
   t.string        :field_2
   t.boolean       :field_3
+  t.text          :field_4
   t.timestamps
 end
 
