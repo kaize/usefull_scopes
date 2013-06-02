@@ -3,7 +3,7 @@ module UsefullScopes
   extend ActiveSupport::Concern
 
   included do
-    scope :random, order("RANDOM()")
+    scope :random, -> { order("RANDOM()") }
 
     scope :exclude, ->(collection_or_object) {
       collection = Array(collection_or_object)
@@ -114,9 +114,9 @@ module UsefullScopes
     attribute_names.each do |a|
       a = a.to_sym
 
-      scope "by_#{a}", order(arel_table[a].desc)
+      scope "by_#{a}", -> { order(arel_table[a].desc) }
 
-      scope "asc_by_#{a}", order(arel_table[a].asc)
+      scope "asc_by_#{a}", -> { order(arel_table[a].asc) }
 
       scope "like_by_#{a}", ->(term) {
         quoted_term = connection.quote(term + '%')
