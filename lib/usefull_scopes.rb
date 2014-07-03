@@ -1,7 +1,6 @@
 require 'active_support/concern'
 
 module UsefullScopes
-  autoload :Version, 'usefull_scopes/version'
   extend ActiveSupport::Concern
 
   included do
@@ -98,7 +97,7 @@ module UsefullScopes
         when Hash
           hash_or_object
         when Array
-          
+
         else
           raise TypeError, "Hash or AR object is expected"
         end
