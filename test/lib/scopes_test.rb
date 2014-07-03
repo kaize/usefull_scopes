@@ -118,17 +118,16 @@ class ScopesTest < TestCase
   end
 
   def test_like_by_condition
-
     @models = Model.like_by_field_2(@model.field_2[0..3])
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      assert condition.expr.match "like"
+    wheres.each do |w|
+      grouping = w.children.first
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      assert grouping.expr.match "like"
     end
   end
 
