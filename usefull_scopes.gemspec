@@ -18,4 +18,10 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
 
   s.require_paths = ["lib"]
+
+  s.rdoc_options      = %w(--line-numbers --inline-source --title usefull_scopes --main README.md)
+  s.extra_rdoc_files  = %w(README.md LICENSE CONTRIBUTING.md)
+
+  s.add_dependency "activerecord", [">= 3.0.0"]
+  s.add_dependency "activesupport", [">= 3.0.0"]
 end

@@ -1,14 +1,15 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 
-# Specify your gem's dependencies in usefull_scopes.gemspec
 gemspec
 
 gem 'rake'
-gem 'sqlite3'
-gem 'minitest'
-gem 'tconsole'
-gem 'turn'
-gem 'activerecord'
-gem 'factory_girl'
-gem 'simplecov'
-gem 'coveralls', require: false
+
+group :test do
+  gem 'minitest', '~> 5'
+  gem 'minitest-reporters'
+  gem 'factory_girl'
+  gem 'simplecov'
+  gem 'coveralls'
+
+  gem 'sqlite3'
+end
