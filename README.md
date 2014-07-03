@@ -118,7 +118,7 @@ These are the scopes created for each of the model attribute.
   </tr>
 </table>
 
-### Example
+### Examples
 
 Now, it is time to play with our model!
 
