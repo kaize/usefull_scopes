@@ -17,11 +17,14 @@ Or install it yourself as:
 
 ## Usage
 
-In order to use these scopes, we need to include `UsefullScopes` module in our model.
+In order to access these scopes, include `UsefullScopes` module in your model.
+
+For example:
 
     class User < ActiveRecord::Base
       include UsefullScopes
     end
+
 
 ### Global scopes
 
@@ -32,25 +35,49 @@ In order to use these scopes, we need to include `UsefullScopes` module in our m
   </tr>
   <tr>
     <td>random</td>
-    <td>Fetches a random record</td>
+    <td>Random record</td>
   </tr>
   <tr>
     <td>exclude</td>
-    <td>Selects only those records who are not in a given array (you could also provide a single object as an argument)</td>
+    <td>Records who are not in a given array (you could also provide a single object as an argument)</td>
   </tr>
   <tr>
     <td>with</td>
-    <td>Returns records, where attributes' values are corresponding to a given hash.</td>
+    <td>Records, where attributes' values are corresponding to a given hash.</td>
   </tr>
   <tr>
     <td>without</td>
-    <td>Returns records, where attributes' values are `NULL` or aren't equal to values from a given hash.</td>
+    <td>Records, where attributes' values are `NULL` or aren't equal to values from a given hash.</td>
+  </tr>
+  <tr>
+    <td>asc_by</td>
+    <td>Records sorted in ascending order using provided attributes.</td>
+  </tr>
+  <tr>
+    <td>desc_by</td>
+    <td>Records sorted in descending order using provided attributes.</td>
+  </tr>
+  <tr>
+    <td>more_than</td>
+    <td>FIXME</td>
+  </tr>
+  <tr>
+    <td>less_than</td>
+    <td>FIXME</td>
+  </tr>
+  <tr>
+    <td>more_or_equal</td>
+    <td>FIXME</td>
+  </tr>
+  <tr>
+    <td>less_or_equal</td>
+    <td>FIXME</td>
   </tr>
 </table>
 
 ### Scopes per attribute
 
-These are the scopes created for each model's attribute.
+These are the scopes created for each of the model attribute.
 
 <table>
   <tr>
@@ -58,20 +85,36 @@ These are the scopes created for each model's attribute.
     <th>Description</th>
   </tr>
   <tr>
-    <td>by_attribute</td>
-    <td>Returns records ordered by `attribute` in descending order</td>
+    <td>by_{attribute}</td>
+    <td>Records ordered by attribute in descending order.</td>
   </tr>
   <tr>
-    <td>asc_by_attribute</td>
-    <td>Returns records ordered by `attribute` in ascending order</td>
+    <td>asc_{by_attribute}</td>
+    <td>Records ordered by attribute in ascending order.</td>
   </tr>
   <tr>
-    <td>like_by_attribute</td>
-    <td>Returns records, where attribute's value like a given term </td>
+    <td>like_by_{attribute}</td>
+    <td>Records, where attribute's value LIKE a given term.</td>
   </tr>
   <tr>
-    <td>ilike_by_attribute</td>
-    <td>Сase insensitive implementation of `like_by_attribute`</td>
+    <td>ilike_by_{attribute}</td>
+    <td>Сase insensitive implementation of `like_by_{attribute}`.</td>
+  </tr>
+  <tr>
+    <td>{attribute}_more</td>
+    <td>Records with attribute's value greater than a given value.</td>
+  </tr>
+  <tr>
+    <td>{attribute}_less</td>
+    <td>Records with attribute's value less than a given value.</td>
+  </tr>
+  <tr>
+    <td>{attribute}_more_or_equal</td>
+    <td>Records with attribute's value greater or equal than a given value.</td>
+  </tr>
+  <tr>
+    <td>{attribute}_less_or_equal</td>
+    <td>Records with attribute's value less or equal than a given value.</td>
   </tr>
 </table>
 
