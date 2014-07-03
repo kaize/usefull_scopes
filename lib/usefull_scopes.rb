@@ -1,3 +1,5 @@
+require 'active_support/concern'
+
 module UsefullScopes
   autoload :Version, 'usefull_scopes/version'
   extend ActiveSupport::Concern
