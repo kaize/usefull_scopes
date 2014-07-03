@@ -28,13 +28,8 @@ class Model < ActiveRecord::Base
 end
 
 class TestCase < MiniTest::Test
-  def load_fixture(filename)
-    File.read(File.dirname(__FILE__) + "/fixtures/#{filename}")
-  end
-
   require 'factory_girl'
   FactoryGirl.reload
-
   include FactoryGirl::Syntax::Methods
 end
 
