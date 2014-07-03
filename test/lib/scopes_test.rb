@@ -144,18 +144,19 @@ class ScopesTest < TestCase
   def test_ilike_by_condition
     @models = Model.ilike_by_field_2(@model.field_2[0..3])
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
 
-    assert where_conditions.any?
+    wheres = @models.arel.constraints
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      assert_kind_of Arel::Nodes::Matches, condition.expr
+    assert wheres.any?
 
-      assert_kind_of Arel::Attributes::Attribute, condition.expr.left
-      assert_equal :field_2, condition.expr.left.name
-      assert_equal "stri%", condition.expr.right
+    wheres.each do |w|
+      grouping = w.children.first
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      assert_kind_of Arel::Nodes::Matches, grouping.expr
+
+      assert_kind_of Arel::Attributes::Attribute, grouping.expr.left
+      assert_equal :field_2, grouping.expr.left.name
+      assert_equal "stri%", grouping.expr.right
     end
   end
 
