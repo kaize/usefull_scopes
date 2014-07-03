@@ -112,8 +112,16 @@ Now, it is time to play with our model!
 
 ## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## Credits
+
+Maintained by kaize.
+
+Thank you to all our amazing [contributors](http://github.com/kaize/usefull_scopes/contributors)!
+
+## License
+
+usefull_scopes is Copyright © 2012-2014 kaize. It is free
+software, and may be redistributed under the terms specified in the LICENSE
+file.
