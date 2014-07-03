@@ -33,10 +33,12 @@ class ScopesTest < TestCase
   def test_exclude_conditions
     @models = Model.exclude(@model)
 
-    request_arel = @models.arel
-    condition = request_arel.where_clauses
-    assert_equal 1, condition.count
-    assert condition.first.match "NOT IN"
+    wheres = @models.arel.constraints
+
+    assert_equal 1, wheres.count
+
+    grouping = wheres.first.children.first
+    assert_kind_of Arel::Nodes::NotIn, grouping.expr
   end
 
   def test_with_result
@@ -50,15 +52,13 @@ class ScopesTest < TestCase
   def test_with_conditions
     @models = Model.with({field_1: @model.field_1})
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      condition.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::Equality, condition_part
-      end
+    wheres.each do |w|
+      equality = w.children.first
+      assert_kind_of Arel::Nodes::Equality, equality
     end
   end
 
@@ -81,20 +81,21 @@ class ScopesTest < TestCase
   def test_without_conditions
     @models = Model.without({field_1: @model.field_1})
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::NotIn, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::NotIn, grouping_part
 
-        assert_equal :field_1, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :field_1, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
@@ -134,11 +135,10 @@ class ScopesTest < TestCase
   def test_ilike_by_result
     assert_respond_to Model, :ilike_by_field_2
 
-    # SQLite error %(
-    #@models = Model.ilike_by_field_2(@model.field_2[0..3])
+    @models = Model.ilike_by_field_2(@model.field_2[0..3])
 
-    #assert @models.any?
-    #assert_includes @models, @model
+    assert @models.any?
+    assert_includes @models, @model
   end
 
   def test_ilike_by_condition
@@ -285,15 +285,15 @@ class ScopesTest < TestCase
   def test_field_more_by_condition
     @models = Model.field_1_more(@model.field_1)
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      assert_kind_of Arel::Nodes::GreaterThan, condition.expr
-      assert_equal @model.field_1, condition.expr.right
+    wheres.each do |w|
+      grouping = w.children.first
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      assert_kind_of Arel::Nodes::GreaterThan, grouping.expr
+      assert_equal @model.field_1, grouping.expr.right
     end
   end
 
@@ -322,15 +322,15 @@ class ScopesTest < TestCase
   def test_field_less_by_condition
     @models = Model.field_1_less(@model.field_1)
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      assert_kind_of Arel::Nodes::LessThan, condition.expr
-      assert_equal @model.field_1, condition.expr.right
+    wheres.each do |w|
+      grouping = w.children.first
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      assert_kind_of Arel::Nodes::LessThan, grouping.expr
+      assert_equal @model.field_1, grouping.expr.right
     end
   end
 
@@ -359,15 +359,15 @@ class ScopesTest < TestCase
   def test_field_more_or_equal_by_condition
     @models = Model.field_1_more_or_equal(@model.field_1)
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      assert_kind_of Arel::Nodes::GreaterThanOrEqual, condition.expr
-      assert_equal @model.field_1, condition.expr.right
+    wheres.each do |w|
+      grouping = w.children.first
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      assert_kind_of Arel::Nodes::GreaterThanOrEqual, grouping.expr
+      assert_equal @model.field_1, grouping.expr.right
     end
   end
 
@@ -395,15 +395,15 @@ class ScopesTest < TestCase
   def test_field_less_or_equal_by_condition
     @models = Model.field_1_less_or_equal(@model.field_1)
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      assert_kind_of Arel::Nodes::LessThanOrEqual, condition.expr
-      assert_equal @model.field_1, condition.expr.right
+    wheres.each do |w|
+      grouping = w.children.first
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      assert_kind_of Arel::Nodes::LessThanOrEqual, grouping.expr
+      assert_equal @model.field_1, grouping.expr.right
     end
   end
 
@@ -419,20 +419,21 @@ class ScopesTest < TestCase
   def test_more_than_condition_value
     @models = Model.more_than({field_1: 1})
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::GreaterThan, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::GreaterThan, grouping_part
 
-        assert_equal :field_1, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :field_1, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
@@ -440,20 +441,21 @@ class ScopesTest < TestCase
   def test_more_than_condition_ar_object
     @models = Model.more_than(@model)
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::GreaterThan, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::GreaterThan, grouping_part
 
-        assert_equal :id, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :id, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
@@ -479,20 +481,21 @@ class ScopesTest < TestCase
   def test_less_than_condition_value
     @models = Model.less_than({field_1: 1})
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::LessThan, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::LessThan, grouping_part
 
-        assert_equal :field_1, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :field_1, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
@@ -500,20 +503,21 @@ class ScopesTest < TestCase
   def test_less_than_condition_ar_object
     @models = Model.less_than(@model)
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::LessThan, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::LessThan, grouping_part
 
-        assert_equal :id, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :id, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
@@ -540,20 +544,21 @@ class ScopesTest < TestCase
   def test_more_or_equal_condition_value
     @models = Model.more_or_equal({field_1: 1})
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::GreaterThanOrEqual, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::GreaterThanOrEqual, grouping_part
 
-        assert_equal :field_1, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :field_1, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
@@ -561,20 +566,21 @@ class ScopesTest < TestCase
   def test_more_or_equal_condition_ar_object
     @models = Model.more_or_equal(@model)
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::GreaterThanOrEqual, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::GreaterThanOrEqual, grouping_part
 
-        assert_equal :id, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :id, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
@@ -601,20 +607,21 @@ class ScopesTest < TestCase
   def test_less_or_equal_condition_value
     @models = Model.less_or_equal({field_1: 1})
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::LessThanOrEqual, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::LessThanOrEqual, grouping_part
 
-        assert_equal :field_1, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :field_1, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
@@ -622,20 +629,21 @@ class ScopesTest < TestCase
   def test_less_or_equal_condition_ar_object
     @models = Model.less_or_equal(@model)
 
-    ctx = @models.arel.as_json["ctx"]
-    where_conditions = ctx.wheres
+    wheres = @models.arel.constraints
 
-    assert where_conditions.any?
+    assert wheres.any?
 
-    where_conditions.each do |condition|
-      assert_kind_of Arel::Nodes::Grouping, condition
-      condition.expr.children.each do |condition_part|
-        assert_kind_of Arel::Nodes::LessThanOrEqual, condition_part
+    wheres.each do |w|
+      grouping = w.children.first
 
-        assert_kind_of Arel::Attributes::Attribute, condition_part.left
+      assert_kind_of Arel::Nodes::Grouping, grouping
+      grouping.expr.children.each do |grouping_part|
+        assert_kind_of Arel::Nodes::LessThanOrEqual, grouping_part
 
-        assert_equal :id, condition_part.left.name
-        assert_equal 1, condition_part.right
+        assert_kind_of Arel::Attributes::Attribute, grouping_part.left
+
+        assert_equal :id, grouping_part.left.name
+        assert_equal 1, grouping_part.right
       end
     end
   end
